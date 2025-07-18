@@ -1,4 +1,4 @@
-import type { LoginPayload, LoginResponse, LoginResult } from "../types/auth";
+import type { LoginPayload, LoginResponse, LoginResult, UserResponse } from "../types/auth";
 
 const url = import.meta.env.VITE_API_URL
 
@@ -20,6 +20,41 @@ export async function login(data: LoginPayload): Promise<LoginResult> {
             status: response.status
         }
 
+    } catch (error) {
+        console.error(error);
+        return {
+            data: null,
+            status: 500,
+        };
+    }
+}
+
+export async function getAuthenticatedUser(): Promise<{ data: UserResponse | null; status: number }> {
+    try {
+
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            return { 
+                data: null, 
+                status: 401 
+            };
+        }
+
+        const response = await fetch(`${url}/api/user`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: 'application/json',
+            },
+        });
+
+        const data: UserResponse = await response.json();
+
+        return {
+            data: response.ok ? data.data : null,
+            status: response.status,
+        };
+        
     } catch (error) {
         console.error(error);
         return {
