@@ -51,3 +51,21 @@ export interface ThreadDetail {
     user: User;
     messages: Message[];
 }
+
+export interface NewThreadResponse {
+    conversation_type_id: number;
+    name: string;
+    user_id: number;
+    updated_at: string;
+    created_at: string;
+    id: number;
+    message: {
+        conversation_id: number;
+        sender_id: number;
+        subject: string;
+        content: string;
+        updated_at: string;
+        created_at: string;
+        id: number;
+    };
+}

@@ -5,6 +5,8 @@ import { useEffect, useState } from "react"
 import ModalNewConversation from "@/components/ModalNewConversation"
 import { getThreadById, getThreads } from "../api/Threads"
 import type { ThreadDetail, ThreadsPayload } from "../types/threads"
+import { getAuthenticatedUser } from "../api/Auth"
+import type { UserResponse } from "../types/auth"
 
 
 interface AppLayoutProps {
@@ -15,11 +17,12 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
 
     const [showModal, setShowModal] = useState(false)
 
+    const [userInfo, setUserInfo] = useState<UserResponse | null>(null);
     const [threads, setThreads] = useState<ThreadsPayload[]>([]);
     const [selectedThread, setSelectedThread] = useState<ThreadDetail | null>(null);
     
     useEffect(() => {
-        const fetchThreads = async () => {
+        const fetchInitialData = async () => {
             const { data, status } = await getThreads();
 
             if (status === 200) {
@@ -29,9 +32,18 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
             if(status === 401 || status === 404) {
                 setThreads([]);
             }
+
+            const { data: userData, status: userStatus } = await getAuthenticatedUser();
+            
+            if (userStatus === 200) {
+                setUserInfo(userData);
+            } else {
+                setUserInfo(null);
+            }
         };
 
-        fetchThreads();
+        fetchInitialData();
+
     }, [])
 
     const handleSelectThread = async (id: number) => {
@@ -53,9 +65,13 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
                         thread={selectedThread}/>                    
                 </div>
             </div>
-            { showModal && (
+            { showModal && userInfo && (
                 <ModalNewConversation
-                    onCloseModal={setShowModal}/>
+                    onCloseModal={setShowModal}
+                    user={userInfo}
+                    onAddThread={(newThread) => {
+                        setThreads(prev => [...prev, newThread]);
+                    }}/>
             )}
         </>
     )

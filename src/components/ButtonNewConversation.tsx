@@ -4,7 +4,7 @@ export default function ButtonNewConversation({ onOpenModal }: { onOpenModal: ()
         <div className="flex justify-end">
             <button
                 onClick={onOpenModal}
-                className="flex gap-x-2 bg-indigo-500 px-3 py-2 text-white rounded-lg hover:opacity-75 cursor-pointer font-light mb-4">
+                className="flex gap-x-2 bg-indigo-500 px-3 py-1 text-white rounded-lg hover:opacity-75 cursor-pointer font-light mb-4">
                 <svg 
                     xmlns="http://www.w3.org/2000/svg" 
                     fill="none" 

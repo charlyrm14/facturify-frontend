@@ -1,8 +1,54 @@
-type ModalProps = {
-    onCloseModal: (statusModal: boolean) => void
+import { useState } from "react";
+import type { UserResponse } from "../types/auth";
+import { createConversation } from "../api/Threads";
+import type { NewThreadResponse } from "../types/threads";
+
+interface Props {
+    user?: UserResponse;
+    onCloseModal: () => void;
+    onAddThread: (conversation: NewThreadResponse) => void;
 }
 
-export default function ModalNewConversation({ onCloseModal }: ModalProps) {
+export default function ModalNewConversation({ user, onCloseModal, onAddThread }: Props) {
+
+    const [form, setForm] = useState({
+        subject: '',
+        content: '',
+        name: '',
+        conversation_type_id: 1
+    });
+
+    const [error, setError] = useState('');
+
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        setForm({
+        ...form,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!user) {
+            setError('No hay información del usuario');
+            return;
+        }
+
+        const formData = {
+            ...form,
+            user_id: user.id,
+        };
+
+        const { data, status } = await createConversation(formData);
+
+        if (status === 201) {
+            onAddThread(data);
+            onCloseModal();  
+        }
+    }
+
     return (
         <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-start pt-10">
             <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-xl shadow-lg p-6 mx-4">
@@ -38,7 +84,10 @@ export default function ModalNewConversation({ onCloseModal }: ModalProps) {
                     </svg>
                 </button>
             </div>
-            <div>
+
+            { error && <p className="text-red-500 font-light">{error}</p> }
+
+            <form>
                 <div>
                     <label 
                         htmlFor="Content"
@@ -46,9 +95,13 @@ export default function ModalNewConversation({ onCloseModal }: ModalProps) {
                             Tipo de conversación
                     </label>
                     <select
-                        className="w-full border border-gray-200 dark:border-gray-700 dark:text-gray-400  p-2 rounded-lg my-2">
-                            <option value="1"> Privado </option>
-                            <option value="2"> Grupo </option>
+                        name="conversation_type_id"
+                        value={form.conversation_type_id}
+                        onChange={handleChange}
+                        className="w-full border border-gray-200 dark:border-gray-700 dark:text-gray-400  p-2 rounded-lg my-2"
+                        required>
+                            <option value={1}> Privado </option>
+                            <option value={2}> Grupo </option>
                     </select>
                 </div>
                 <div>
@@ -60,8 +113,11 @@ export default function ModalNewConversation({ onCloseModal }: ModalProps) {
                     <input 
                         type="text"
                         name="name"
+                        value={form.name} 
+                        onChange={handleChange}
                         placeholder="Ej: Propuesta diseño"
-                        className="w-full border border-gray-200 dark:border-gray-700 placeholder-gray-400 p-2 rounded-lg my-2"/>
+                        className="w-full border border-gray-200 dark:border-gray-700 dark:text-gray-400 p-2 rounded-lg my-2"
+                        required/>
                 </div>
                 <div>
                     <label 
@@ -72,8 +128,11 @@ export default function ModalNewConversation({ onCloseModal }: ModalProps) {
                     <input 
                         type="text"
                         name="subject"
+                        value={form.subject} 
+                        onChange={handleChange}
                         placeholder="Ej: Ecommerce"
-                        className="w-full border border-gray-200 dark:border-gray-700 placeholder-gray-400  p-2 rounded-lg my-2"/>
+                        className="w-full border border-gray-200 dark:border-gray-700 dark:text-gray-400  p-2 rounded-lg my-2"
+                        required/>
                 </div>
                 <div>
                     <label 
@@ -82,19 +141,24 @@ export default function ModalNewConversation({ onCloseModal }: ModalProps) {
                             Mensaje
                     </label>
                     <textarea 
-                        name="Content"
+                        name="content"
+                        value={form.content} 
+                        onChange={handleChange}
                         placeholder="Escribe un mensaje"
-                        className="w-full border border-gray-200 dark:border-gray-700 p-2 placeholder-gray-400 rounded-lg my-2"/>
+                        className="w-full border border-gray-200 dark:border-gray-700 p-2 dark:text-gray-400 rounded-lg my-2"
+                        required/>
                 </div>
-            </div>
+            </form>
             <div className="mt-4 flex justify-end gap-2">
                     <button 
                         onClick={() => onCloseModal(false)}
                         className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-400 dark:hover:bg-slate-600 text-sm cursor-pointer hover:opacity-75">
                             Cancelar
                     </button>
-                    <button className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm cursor-pointer hover:opacity-75">
-                        Guardar
+                    <button
+                        onClick={handleSubmit}
+                        className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm cursor-pointer hover:opacity-75">
+                            Guardar
                     </button>
                 </div>
             </div>
