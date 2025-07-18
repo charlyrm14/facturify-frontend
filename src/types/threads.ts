@@ -1,3 +1,15 @@
+export interface Message {
+    id: number;
+    subject: string;
+    content: string;
+    conversation_id: number;
+    sender_id: number;
+    parent_message_id: number | null;
+    read_at: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface ConversationType {
     id: number;
     name: string;
@@ -25,4 +37,17 @@ export interface ThreadsPayload {
 export interface ThreadsResult {
     data: ThreadsPayload[] | null;
     status: number;
+}
+
+export interface ThreadDetail {
+    id: number;
+    conversation_type_id: number;
+    name: string;
+    user_id: number;
+    created_at: string;
+    updated_at: string;
+    deleted_at: string | null;
+    conversation_type: ConversationType;
+    user: User;
+    messages: Message[];
 }
