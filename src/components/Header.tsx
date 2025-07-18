@@ -1,7 +1,7 @@
 import profileImage from '@/assets/300-27.jpg'
 import { useState } from 'react'
 
-export default function Header() {
+export default function Header({ onLogout }: { onLogout: () => void }) {
 
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
@@ -35,19 +35,21 @@ export default function Header() {
                     { isUserMenuOpen && (
                         <div className='absolute bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 w-60 -bottom-16 right-0 p-1 rounded-lg'>
                             <div>
-                                <button className='text-red-500 flex items-center gap-x-2 w-full hover:bg-gray-100 hover:dark:bg-slate-700 cursor-pointer p-2 rounded-lg'>
-                                    <svg 
-                                        xmlns="http://www.w3.org/2000/svg" 
-                                        fill="none" 
-                                        viewBox="0 0 24 24" 
-                                        strokeWidth="1.5" 
-                                        stroke="currentColor" 
-                                        className="size-6">
-                                            <path 
-                                                strokeLinecap="round" 
-                                                strokeLinejoin="round" 
-                                                d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
-                                    </svg> Cerrar sesión
+                                <button 
+                                    onClick={onLogout}
+                                    className='text-red-500 flex items-center gap-x-2 w-full hover:bg-gray-100 hover:dark:bg-slate-700 cursor-pointer p-2 rounded-lg'>
+                                        <svg 
+                                            xmlns="http://www.w3.org/2000/svg" 
+                                            fill="none" 
+                                            viewBox="0 0 24 24" 
+                                            strokeWidth="1.5" 
+                                            stroke="currentColor" 
+                                            className="size-6">
+                                                <path 
+                                                    strokeLinecap="round" 
+                                                    strokeLinejoin="round" 
+                                                    d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
+                                        </svg> Cerrar sesión
                                 </button>
                             </div>
                         </div>
