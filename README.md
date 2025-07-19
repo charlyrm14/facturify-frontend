@@ -35,23 +35,6 @@ npm run dev
 yarn dev
 ```
 
-5. Generar clave de aplicación
-```bash
-php artisan key:generate
-```
-
-6. Ejecutar migraciones 
-```bash
-php artisan migrate
-ó 
-php artisan migrate --seed
-```
-
-7. Levantar servidor
-```bash
-php artisan migrate
-```
-
 Endpoints
 
 > Este proyecto consume la API backend Facturify Laravel 12.
