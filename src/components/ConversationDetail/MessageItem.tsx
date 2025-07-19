@@ -8,7 +8,7 @@ interface Props {
 export default function MessageItem({ message }: Props) {
 
     const { subject, content, created_at } = message;
-    
+
     return(
         <section>
             <div className='mt-10 px-4 md:px-12'>

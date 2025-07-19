@@ -1,13 +1,13 @@
 export interface Message {
     id: number;
-    subject: string;
+    subject?: string;
     content: string;
     conversation_id: number;
     sender_id: number;
     parent_message_id: number | null;
-    read_at: string | null;
-    created_at: string;
-    updated_at: string;
+    read_at?: string | null;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export interface ConversationType {
