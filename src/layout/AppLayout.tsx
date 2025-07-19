@@ -51,6 +51,17 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
         setSelectedThread(data);
     };
 
+    const handleAddMessageToThread = (newMessage: Message) => {
+        setSelectedThread(prevThread => {
+            if (!prevThread) return prevThread;
+
+            return {
+            ...prevThread,
+            messages: [...prevThread.messages, newMessage]
+            };
+        });
+    };
+
     return(
         <>
             <Header
@@ -62,7 +73,9 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
                         threads={threads} 
                         onSelectThread={handleSelectThread}/>
                     <ConversationDetail
-                        thread={selectedThread}/>                    
+                        thread={selectedThread}
+                        user={userInfo}
+                        onAddMessage={handleAddMessageToThread}/>                    
                 </div>
             </div>
             { showModal && userInfo && (
