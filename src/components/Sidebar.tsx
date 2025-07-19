@@ -7,16 +7,23 @@ interface Props {
     onOpenModal: () => void;
     threads: ThreadsPayload[];
     onSelectThread: (id: number) => void;
+    activeFilter: "all" | "private" | "group";
+    setActiveFilter: React.Dispatch<React.SetStateAction<"all" | "private" | "group">>;
+    
 }
 
-export default function Sidebar({ onOpenModal, threads, onSelectThread }): React.FC<Props> {
+export default function Sidebar({ onOpenModal, threads, onSelectThread, activeFilter, setActiveFilter, searchText, setSearchText }: Props) {
 
     return (
         <aside className="w-full md:w-1/4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-900 rounded-lg shadow">
             <div className="p-4">
                 <ButtonNewConversation
                     onOpenModal={onOpenModal}/>
-                <Search/>
+                <Search
+                    setActiveFilter={setActiveFilter}
+                    activeFilter={activeFilter}
+                    searchText={searchText}
+                    setSearchText={setSearchText}/>
             </div>
             <div className="mt-4 p-2">
                 { threads.length === 0 ? (

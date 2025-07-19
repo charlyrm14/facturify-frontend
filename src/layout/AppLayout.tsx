@@ -20,7 +20,9 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
     const [userInfo, setUserInfo] = useState<UserResponse | null>(null);
     const [threads, setThreads] = useState<ThreadsPayload[]>([]);
     const [selectedThread, setSelectedThread] = useState<ThreadDetail | null>(null);
-    
+    const [activeFilter, setActiveFilter] = useState<"all" | "private" | "group">("all");
+    const [searchText, setSearchText] = useState("");
+
     useEffect(() => {
         const fetchInitialData = async () => {
             const { data, status } = await getThreads();
@@ -46,6 +48,18 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
 
     }, [])
 
+    const filteredThreads = threads.filter(thread => {
+        if (activeFilter === "private" && thread.conversation_type_id !== 1) return false;
+        if (activeFilter === "group" && thread.conversation_type_id !== 2) return false;
+
+        if (
+            searchText &&
+            !thread.name.toLowerCase().includes(searchText.toLowerCase())
+        ) return false;
+
+        return true;
+    });
+
     const handleSelectThread = async (id: number) => {
         const { data } = await getThreadById(id);
         setSelectedThread(data);
@@ -70,8 +84,12 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
                 <div className="flex flex-col md:flex-row h-screen gap-y-4 gap-x-6">
                     <Sidebar
                         onOpenModal={() => setShowModal(true)}
-                        threads={threads} 
-                        onSelectThread={handleSelectThread}/>
+                        threads={filteredThreads} 
+                        onSelectThread={handleSelectThread}
+                        activeFilter={activeFilter}
+                        setActiveFilter={setActiveFilter}
+                        searchText={searchText}
+                        setSearchText={setSearchText}/>
                     <ConversationDetail
                         thread={selectedThread}
                         user={userInfo}
